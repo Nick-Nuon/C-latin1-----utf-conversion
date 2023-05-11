@@ -160,20 +160,41 @@ bool test_UTF32_to_latin() {
 }
 
 
+template<endianness input_endianess>
 void test_conversion(const char *example) {
     // Step 1: Convert the original Latin-1 string to UTF-32
-    size_t latin_len = strlen(example);
+    const size_t latin_len = strlen(example);
     uint32_t utf32_output[latin_len];
 
-    latin_to_UTF32<BIG>(example, utf32_output, latin_len);
+    latin_to_UTF32<input_endianess>(example, utf32_output, latin_len);
+
+/*
+    // Print the content of utf32_output
+    printf("utf32_output: [");
+    for (size_t i = 0; i < latin_len; i++) {
+        printf("U+%04X", utf32_output[i]);
+        if (i + 1 < latin_len) {
+            printf(", ");
+        }
+    }
+    printf("]\n");*/
 
     // Step 2: Convert the UTF-32 string back to Latin-1
-    char latin_output[latin_len + 1];  // +1 for the null-terminator
-    UTF32_to_latin<BIG>(utf32_output, latin_len, latin_output);
-    latin_output[latin_len] = '\0'; // Add the null-terminator
+    char latin_output[latin_len];  
+    UTF32_to_latin<input_endianess>(utf32_output, latin_len, latin_output);
 
     // Step 3: Compare the original Latin-1 string and the converted back string
-    bool success = strcmp(example, latin_output) == 0;
+    //bool success = strcmp(example, latin_output) == 0;
+    bool success = true;
+    for (size_t i = 0; i < strlen(example); i++) {
+        
+        if (example[i] != latin_output[i]) {
+            success = false;
+            printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
+        }/*else {
+        printf("Match at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
+    }*/
+    }
 
     printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
 }

@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 "\xf8VU\xdb\xcc~\xfc\xcf\xf6\xddW\xf8\xac\xfd\xe6\xd1"};
 
     for (int i = 0; i < 10; i++) {
-        test_conversion(examples[i]);
+        test_conversion<LITTLE>(examples[i]);
     }
 
 
