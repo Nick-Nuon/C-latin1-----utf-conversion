@@ -75,7 +75,7 @@ bool test_UTF32_to_latin() {
     };*/
 
     //this ensure this is represented *as is* in memory. 
-    //No, I did not type this horror: ChatGPT was kind enough to do it for me 
+    //No, I did not type this manually: ChatGPT was kind enough to do it for me 
     uint8_t utf8be_input[] = {
         0x00, 0x00, 0x00, 0x48,
         0x00, 0x00, 0x00, 0x65,
