@@ -111,7 +111,7 @@ bool test_UTF32_to_latin() {
 
     // Call the UTF32BE_to_latin function
     char output[sizeof(expected_output)] = {0};
-    UTF32BE_to_latin<BIG>(utf32be_input, utf32be_input_len, output);
+    UTF32_to_latin<BIG>(utf32be_input, utf32be_input_len, output);
 
     // Compare the output with the expected output
     if (memcmp(output, expected_output,utf32be_input_len) != 0) {
@@ -146,7 +146,7 @@ bool test_UTF32_to_latin() {
 
     // Call the UTF32BE_to_latin function
     char output_le[sizeof(expected_output)] = {0};
-    UTF32BE_to_latin<LITTLE>(utf32le_input, utf32le_input_len, output_le);
+    UTF32_to_latin<LITTLE>(utf32le_input, utf32le_input_len, output_le);
 
     // Compare the output with the expected output
     if (memcmp(output, expected_output,utf32le_input_len) != 0) {
@@ -157,4 +157,23 @@ bool test_UTF32_to_latin() {
 
     printf("Passed all tests!");
     return true;
+}
+
+
+void test_conversion(const char *example) {
+    // Step 1: Convert the original Latin-1 string to UTF-32
+    size_t latin_len = strlen(example);
+    uint32_t utf32_output[latin_len];
+
+    latin_to_UTF32<BIG>(example, utf32_output, latin_len);
+
+    // Step 2: Convert the UTF-32 string back to Latin-1
+    char latin_output[latin_len + 1];  // +1 for the null-terminator
+    UTF32_to_latin<BIG>(utf32_output, latin_len, latin_output);
+    latin_output[latin_len] = '\0'; // Add the null-terminator
+
+    // Step 3: Compare the original Latin-1 string and the converted back string
+    bool success = strcmp(example, latin_output) == 0;
+
+    printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
 }

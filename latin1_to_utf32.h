@@ -27,7 +27,7 @@ void latin_to_UTF32(const char *latin_str, uint32_t *utf32_output,
 }
 
 template<endianness input_endianess>
-void UTF32BE_to_latin(const uint32_t *UTF32_str, size_t len, char *output) {
+void UTF32_to_latin(const uint32_t *UTF32_str, size_t len, char *output) {
     uint32_t utf32_char;
     uint8_t latin_char;
 
