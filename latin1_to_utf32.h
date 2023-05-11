@@ -38,8 +38,8 @@ void UTF32_to_latin(const uint32_t *UTF32_str, size_t len, char *output) {
 
         
         //here you can use everything simply as hexadecimal without worrying about the switch C++ <=> memory
-        if ((utf32_char & 0xFFFFFF00) == 0){
-        //if (utf32_char <= 0xFF) { // Check if the character can be represented in Latin-1
+        if ((utf32_char & 0xFFFFFF00) == 0){ // Check if the character can be represented in Latin-1
+        //if (utf32_char <= 0xFF) { 
             output[i] = (uint8_t)(utf32_char & 0xFF);
             /*printf("Output:%X\n", output[i]);*/
         } else {

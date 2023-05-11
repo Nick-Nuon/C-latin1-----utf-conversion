@@ -48,9 +48,18 @@ int main(int argc, char **argv) {
 "!\xa3u\xba 0\xd4\xfd\xd6 DRL}=\xf6Z-",
 "\xf8VU\xdb\xcc~\xfc\xcf\xf6\xddW\xf8\xac\xfd\xe6\xd1"};
 
+    printf("\nTesting conversion back to back: Little Endianness\n");
     for (int i = 0; i < 10; i++) {
         test_conversion<LITTLE>(examples[i]);
+
     }
+
+printf("\nTesting conversion back to back: Big Endianness\n");
+    for (int i = 0; i < 10; i++) {
+        test_conversion<BIG>(examples[i]);
+
+    }
+        
 
 
   return 0;

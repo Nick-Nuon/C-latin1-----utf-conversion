@@ -184,14 +184,14 @@ void test_conversion(const char *example) {
     UTF32_to_latin<input_endianess>(utf32_output, latin_len, latin_output);
 
     // Step 3: Compare the original Latin-1 string and the converted back string
-    //bool success = strcmp(example, latin_output) == 0;
+    //bool success = strcmp(example, latin_output) == 0; <--- I believe this does not work because example is null terminated while latin_output isn't.
     bool success = true;
     for (size_t i = 0; i < strlen(example); i++) {
         
         if (example[i] != latin_output[i]) {
             success = false;
             printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
-        }/*else {
+        } /*else {
         printf("Match at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
     }*/
     }
