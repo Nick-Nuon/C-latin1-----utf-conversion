@@ -61,10 +61,24 @@ printf("\nTesting conversion back to back: Big Endianness\n");
     }
 
     printf("Test for UTF16_to_latin1: Little Endian:\n");
-    test_utf16_to_latin<LITTLE>();
+    test_utf16_to_latin<LITTLE>(u"Hello, World!");
 
     printf("Test for UTF16_to_latin1: Big Endian:\n");
-    test_utf16_to_latin<BIG>();
+    test_utf16_to_latin<BIG>(u"Hello, World!");
+
+
+    printf("Test for UTF16_to_latin1: Big Endian, passing along surrogate (this should fail):\n");
+    test_utf16_to_latin<BIG>(u"Hello,\xDC01 World!");
+
+    printf("Test for UTF16_to_latin1: Little Endian, passing along surrogate (this should fail):\n");
+    test_utf16_to_latin<BIG>(u"Hello,\xDC01 World!");
+
+    printf("Test for latin_to_utf16: Little Endian output:\n");
+    test_latin_to_utf16<LITTLE>();
+
+    printf("Test for latin_to_utf16: Big Endian output:\n");
+    test_latin_to_utf16<BIG>();
+        
         
 
 

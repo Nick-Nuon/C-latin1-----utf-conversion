@@ -200,11 +200,11 @@ void test_conversion(const char *example) {
     printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
 }
 
-template <endianness input_endianess>
+/* template <endianness input_endianess>
 void test_utf16_to_latin() {
     // Here is a string in UTF-16 format.
     // For this example, let's use a string without surrogate pairs
-    char16_t utf16_str[] = u"Hello, World!";
+    char16_t utf16_str[] = u"Hello,\xD801 World!";
 
     // The length of the string
     size_t len = sizeof(utf16_str) / sizeof(utf16_str[0]) - 1;  // subtract 1 to exclude the null terminator
@@ -225,5 +225,66 @@ void test_utf16_to_latin() {
         printf("Conversion failed.\n");
     } else {
         printf("Converted string: %s\n", latin_str);
+    }
+}
+ */
+
+template <endianness input_endianess>
+void test_utf16_to_latin(const char16_t *test_str) {
+    // Determine the length of the string
+    size_t len = 0;
+    while (test_str[len] != u'\0') { ++len; }
+
+    // Create a copy of the string to avoid modifying the original string
+    char16_t* utf16_str = new char16_t[len + 1];
+    memcpy(utf16_str, test_str, (len + 1) * sizeof(char16_t));
+
+    if (!match_system(input_endianess)) {
+        for (size_t i = 0; i < len; i++) {
+            utf16_str[i] = swap_bytes(utf16_str[i]);
+        }
+    }
+
+    // The buffer to store the output Latin-1 string
+    char latin_str[50];
+
+    // Call the function to convert the string
+    size_t converted_len = utf16_to_latin<input_endianess>(utf16_str, len, latin_str);
+
+    // Print out the result
+    if (converted_len == 0) {
+        printf("Conversion failed.\n");
+    } else {
+        printf("Converted string: %s\n", latin_str);
+    }
+
+    // Free the dynamically allocated memory
+    delete[] utf16_str;
+}
+
+template <endianness output_endianess>
+void test_latin_to_utf16() {
+    // Here is a string in Latin-1 format
+    char latin_str[] = "Hello, World!";
+
+    // The length of the string
+    size_t len = strlen(latin_str);
+
+    // The buffer to store the output UTF-16 string
+    // Note that we need 2 bytes for each Latin-1 character, plus 2 bytes for the null terminator
+    char16_t utf16_str[50];
+
+    // Call the function to convert the string
+    size_t converted_len = latin_to_utf16<output_endianess>(latin_str, len, utf16_str);
+
+    // Print out the result
+    if (converted_len == 0) {
+        printf("Conversion failed.\n");
+    } else {
+        printf("Converted string (in hex): ");
+        for (size_t i = 0; i < converted_len; ++i) {
+            printf("%04x ", utf16_str[i]);
+        }
+        printf("\n");
     }
 }
