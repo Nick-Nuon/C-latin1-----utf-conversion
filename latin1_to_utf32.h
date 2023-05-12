@@ -5,7 +5,7 @@
 
 
 template<endianness output_endianess> //needed because we output either to UTF32LE or UTF32BE
-size_t latin_to_UTF32(const char *latin_str, uint32_t *utf32_output, size_t utf32_len) {
+size_t latin_to_UTF32(const char *latin_str,size_t utf32_len, uint32_t *utf32_output ) {
   // Add BOM at the beginning of the UTF-32 string
   // utf32_output[0] = 0xFEFF;
 

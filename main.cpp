@@ -99,10 +99,30 @@ printf("\nTesting conversion back to back: Big Endianness\n");
     }*/
 
 
-//This doesn't work, complains about type being wrong
-/* 
+//This doesn't work, complains about type being wrong, no idea why
+ /*
 const char* test_string = "test string";
 test_conversion_with_templates<BIG, char32_t>(test_string, strlen(test_string), latin_to_UTF32<BIG>, UTF32_to_latin<BIG>);
- 
- */  return 0;
+ */
+  
+    const char* example = "Hello, world!";
+    test_conversion_utf16<LITTLE>(example);
+
+
+
+    printf("\nTesting conversion Latin1 => UTF16 => Latin1: Little Endianness\n");
+    for (int i = 0; i < 10; i++) {
+        test_conversion_utf16<LITTLE>(examples[i]);
+
+    }
+
+        printf("\nTesting conversion Latin1 => UTF16 => Latin1: Big Endianness\n");
+    for (int i = 0; i < 10; i++) {
+        test_conversion_utf16<BIG>(examples[i]);
+
+    }
+
+
+
+   return 0;
 }
