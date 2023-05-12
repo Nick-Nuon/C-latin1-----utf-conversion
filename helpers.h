@@ -1,4 +1,6 @@
-
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 #pragma once
 
 #define SIMDUTF_IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)

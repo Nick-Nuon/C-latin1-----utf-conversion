@@ -3,6 +3,7 @@
 #include "helpers.h"
 #include "latin1_to_utf32.h"
 #include "utf16_to_latin1.h"
+#include "utf8_to_latin1.h"
 
 #pragma once
 
@@ -290,32 +291,6 @@ void test_latin_to_utf16() {
 }
 
 
-template <endianness input_endianess, endianness output_endianess>
-void test_latin_utf16_conversion(const char *example) {
-    // Step 1: Convert the original Latin-1 string to UTF-16
-    const size_t latin_len = strlen(example);
-    char16_t utf16_output[latin_len];
-
-    latin_to_utf16<input_endianess, output_endianess>(example, latin_len, utf16_output);
-
-    // Step 2: Convert the UTF-16 string back to Latin-1
-    char latin_output[latin_len + 1];  // +1 for the null terminator
-    size_t converted_len = utf16_to_latin<output_endianess>(utf16_output, latin_len, latin_output);
-
-    latin_output[converted_len] = '\0'; // Null-terminate the string
-
-    // Step 3: Compare the original Latin-1 string and the converted back string
-    bool success = strcmp(example, latin_output) == 0;
-    if (!success) {
-        for (size_t i = 0; i < strlen(example); i++) {
-            if (example[i] != latin_output[i]) {
-                printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
-            }
-        }
-    }
-
-    printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
-}
 
 
 
@@ -360,3 +335,29 @@ void test_conversion_utf16(const char *example) {
 
     printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
 }
+
+void test_utf8_to_latin(const char *test_str) {
+    // Determine the length of the string
+    size_t len = strlen(test_str);
+
+    // Create a copy of the string to avoid modifying the original string
+    char* utf8_str = new char[len + 1];
+    memcpy(utf8_str, test_str, (len + 1) * sizeof(char));
+
+    // The buffer to store the output Latin-1 string
+    char latin_str[50];
+
+    // Call the function to convert the string
+    size_t converted_len = UTF8_to_latin(utf8_str, len, latin_str);
+
+    // Print out the result
+    if (converted_len == 0) {
+        printf("Conversion failed.\n");
+    } else {
+        printf("Converted string: %s\n", latin_str);
+    }
+
+    // Free the dynamically allocated memory
+    delete[] utf8_str;
+}
+

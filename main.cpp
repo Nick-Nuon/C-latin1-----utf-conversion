@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
 "!\xa3u\xba 0\xd4\xfd\xd6 DRL}=\xf6Z-",
 "\xf8VU\xdb\xcc~\xfc\xcf\xf6\xddW\xf8\xac\xfd\xe6\xd1"};
 
+
     printf("\nTesting conversion back to back: Little Endianness\n");
     for (int i = 0; i < 10; i++) {
         test_conversion<LITTLE>(examples[i]);
@@ -121,6 +122,17 @@ test_conversion_with_templates<BIG, char32_t>(test_string, strlen(test_string), 
         test_conversion_utf16<BIG>(examples[i]);
 
     }
+
+    printf("\nTesting conversion UTF8 => Latin1: Pure ASCII \n");
+        test_utf8_to_latin(u8"Hello World"); // pure ASCII should convert
+
+    printf("\nTesting conversion UTF8 => Latin1: 2 byte Code point within acceptable range (129-255) \n");
+        test_utf8_to_latin(u8"Hello World \xC3\x98"); // two bytes that denotes a code point within 129-255 range should convert, corresponds to character 0x00D8
+
+    printf("\nTesting conversion UTF8 => Latin1: This should fail  \n");
+        test_utf8_to_latin(u8"Hello World\xD8");
+
+ 
 
 
 

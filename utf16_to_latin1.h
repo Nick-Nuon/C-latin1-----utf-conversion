@@ -1,4 +1,3 @@
-#include <stddef.h>
 #include "helpers.h"
 
 template <endianness big_endian>

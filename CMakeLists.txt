@@ -19,7 +19,7 @@ FetchContent_Declare(
   URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
 )
 
-add_executable(code_dump main.cpp tests.h latin1_to_utf32.h utf16_to_latin1.h) #simdutf.cpp simdutf.h)# ./tracy/public/TracyClient.cpp) # add this executable
+add_executable(code_dump main.cpp tests.h latin1_to_utf32.h utf16_to_latin1.h utf8_to_latin1.h) #simdutf.cpp simdutf.h)# ./tracy/public/TracyClient.cpp) # add this executable
 
 # set options before add_subdirectory
 # available options : TRACY_ENABLE , TRACY_ON_DEMAND , TRACY_NO_BROADCAST ,
