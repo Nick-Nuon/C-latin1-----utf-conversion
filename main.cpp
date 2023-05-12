@@ -59,6 +59,12 @@ printf("\nTesting conversion back to back: Big Endianness\n");
         test_conversion<BIG>(examples[i]);
 
     }
+
+    printf("Test for UTF16_to_latin1: Little Endian:\n");
+    test_utf16_to_latin<LITTLE>();
+
+    printf("Test for UTF16_to_latin1: Big Endian:\n");
+    test_utf16_to_latin<BIG>();
         
 
 

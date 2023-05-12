@@ -28,7 +28,7 @@ bool match_system(enum endianness e) {
 }
 
 
-uint16_t swap_bytes_16(uint16_t val) {
+uint16_t swap_bytes(uint16_t val) {
   return (val << 8) | (val >> 8);
 }
 

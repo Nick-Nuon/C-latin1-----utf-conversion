@@ -2,6 +2,7 @@
 #include <assert.h>
 #include "helpers.h"
 #include "latin1_to_utf32.h"
+#include "utf16_to_latin1.h"
 
 #pragma once
 
@@ -197,4 +198,32 @@ void test_conversion(const char *example) {
     }
 
     printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
+}
+
+template <endianness input_endianess>
+void test_utf16_to_latin() {
+    // Here is a string in UTF-16 format.
+    // For this example, let's use a string without surrogate pairs
+    char16_t utf16_str[] = u"Hello, World!";
+
+    // The length of the string
+    size_t len = sizeof(utf16_str) / sizeof(utf16_str[0]) //- 1;  // subtract 1 to exclude the null terminator
+
+
+    if (!match_system(input_endianess)){
+        for (size_t i = 0; i < len; i++) 
+              { utf16_str[i] = swap_bytes(utf16_str[i]); }}}
+
+    // The buffer to store the output Latin-1 string
+    char latin_str[50];
+
+    // Call the function to convert the string
+    size_t converted_len = utf16_to_latin<input_endianess>(utf16_str, len, latin_str);
+
+    // Print out the result
+    if (converted_len == 0) {
+        printf("Conversion failed.\n");
+    } else {
+        printf("Converted string: %s\n", latin_str);
+    }
 }
