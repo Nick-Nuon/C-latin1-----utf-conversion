@@ -262,7 +262,7 @@ void test_utf16_to_latin(const char16_t *test_str) {
     delete[] utf16_str;
 }
 
-template <endianness output_endianess>
+template <endianness is_big_endian>
 void test_latin_to_utf16() {
     // Here is a string in Latin-1 format
     char latin_str[] = "Hello, World!";
@@ -275,7 +275,7 @@ void test_latin_to_utf16() {
     char16_t utf16_str[50];
 
     // Call the function to convert the string
-    size_t converted_len = latin_to_utf16<output_endianess>(latin_str, len, utf16_str);
+    size_t converted_len = latin_to_utf16<is_big_endian>(latin_str, len, utf16_str);
 
     // Print out the result
     if (converted_len == 0) {
@@ -288,3 +288,119 @@ void test_latin_to_utf16() {
         printf("\n");
     }
 }
+
+
+template <endianness input_endianess, endianness output_endianess>
+void test_latin_utf16_conversion(const char *example) {
+    // Step 1: Convert the original Latin-1 string to UTF-16
+    const size_t latin_len = strlen(example);
+    char16_t utf16_output[latin_len];
+
+    latin_to_utf16<input_endianess, output_endianess>(example, latin_len, utf16_output);
+
+    // Step 2: Convert the UTF-16 string back to Latin-1
+    char latin_output[latin_len + 1];  // +1 for the null terminator
+    size_t converted_len = utf16_to_latin<output_endianess>(utf16_output, latin_len, latin_output);
+
+    latin_output[converted_len] = '\0'; // Null-terminate the string
+
+    // Step 3: Compare the original Latin-1 string and the converted back string
+    bool success = strcmp(example, latin_output) == 0;
+    if (!success) {
+        for (size_t i = 0; i < strlen(example); i++) {
+            if (example[i] != latin_output[i]) {
+                printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
+            }
+        }
+    }
+
+    printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
+}
+
+/* 
+template <endianness is_big_endian, typename ToUnicodeFunc, typename FromUnicodeFunc>
+void test_conversion1(const char* example, ToUnicodeFunc to_unicode, FromUnicodeFunc from_unicode) {
+    // Step 1: Convert the original Latin-1 string to Unicode (either UTF-16 or UTF-32)
+    const size_t latin_len = strlen(example);
+    auto unicode_output = new decltype(to_unicode(example, latin_len)) [latin_len];
+
+    to_unicode<is_big_endian>(example, latin_len, unicode_output);
+
+    // Step 2: Convert the Unicode string back to Latin-1
+    char latin_output[latin_len + 1];  // +1 for the null terminator
+    size_t converted_len = from_unicode<is_big_endian>(unicode_output, latin_len, latin_output);
+
+    latin_output[converted_len] = '\0'; // Null-terminate the string
+
+    // Step 3: Compare the original Latin-1 string and the converted back string
+    bool success = strcmp(example, latin_output) == 0;
+    if (!success) {
+        for (size_t i = 0; i < strlen(example); i++) {
+            if (example[i] != latin_output[i]) {
+                printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
+            }
+        }
+    }
+
+    printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
+
+    delete[] unicode_output;
+} 
+ */
+
+
+/* 
+template <endianness is_big_endian>
+void test_conversion1(const char* example, 
+                      void (*to_unicode)(const char*, uint32_t*, size_t), 
+                      void (*from_unicode)(const uint32_t*, size_t, char*)) {
+    // Step 1: Convert the original Latin-1 string to Unicode
+    const size_t latin_len = strlen(example);
+    uint32_t unicode_output[latin_len];
+
+    to_unicode(example, unicode_output, latin_len);
+
+    // Step 2: Convert the Unicode string back to Latin-1
+    char latin_output[latin_len + 1]; //= {0}; // Initialize all elements to zero
+    // Initialize all elements to zero
+    memset(latin_output, 0, latin_len + 1);
+    
+    from_unicode(unicode_output, latin_len, latin_output);
+
+    // Step 3: Compare the original Latin-1 string and the converted back string
+    bool success = strcmp(example, latin_output) == 0;
+
+    if (!success) {
+        for (size_t i = 0; i < latin_len; i++) {
+            if (example[i] != latin_output[i]) {
+                printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
+                break; // We break after the first mismatch for brevity
+            }
+        }
+    }
+
+    printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
+} */
+
+
+template<endianness endian, typename T, size_t (*encode)(const char*, size_t, T*), size_t (*decode)(const T*, size_t, char*)>
+void test_conversion1(const char* input, size_t input_len) {
+    // Prepare buffer
+    T buffer[input_len * 4];  // Assuming worst case UTF-32
+
+    // Encode
+    size_t encoded_size = encode(input, input_len, buffer);
+
+    // Maybe do something with the encoded data here...
+
+    // Prepare buffer for decoded data
+    char decoded_buffer[input_len];
+
+    // Decode
+    size_t decoded_size = decode(buffer, encoded_size, decoded_buffer);
+
+    // Now decoded_buffer contains the decoded data
+    // Here you could, for example, compare the decoded data with the original input
+    // to check if the encoding/decoding process worked correctly.
+}
+
