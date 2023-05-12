@@ -207,12 +207,12 @@ void test_utf16_to_latin() {
     char16_t utf16_str[] = u"Hello, World!";
 
     // The length of the string
-    size_t len = sizeof(utf16_str) / sizeof(utf16_str[0]) //- 1;  // subtract 1 to exclude the null terminator
+    size_t len = sizeof(utf16_str) / sizeof(utf16_str[0]) - 1;  // subtract 1 to exclude the null terminator
 
 
     if (!match_system(input_endianess)){
         for (size_t i = 0; i < len; i++) 
-              { utf16_str[i] = swap_bytes(utf16_str[i]); }}}
+              { utf16_str[i] = swap_bytes(utf16_str[i]); }}
 
     // The buffer to store the output Latin-1 string
     char latin_str[50];
