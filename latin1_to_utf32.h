@@ -47,5 +47,7 @@ size_t UTF32_to_latin(const uint32_t *UTF32_str, size_t len, char *output) {
             output[i] = '*'; // Replace non-Latin-1 characters with a placeholder
         }
     }
+  return len;
+
 }
 

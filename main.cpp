@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 
   //::testing::InitGoogleTest(&argc, argv);
   //return RUN_ALL_TESTS();
-/* 
+
   const char* examples[10] = {"\xf2\xb1\xa2q\xc1Lo\xca\xcf\xd6\xc0 F\xffT$%",
 "G|\xb2i_}\xafk\xebQ\xb1q\xbf@A",
 ".\xba 8\xbc\xc6\xa1\xf0\xfa\xcd~\xfe\xaaLD\xc0\xe7",
@@ -78,7 +78,7 @@ printf("\nTesting conversion back to back: Big Endianness\n");
 
         printf("Test for latin_to_utf16: Little Endian system\n");
     test_latin_to_utf16<LITTLE>();
- */
+
 
     // test_conversion1<LITTLE>(examples[i],latin_to_UTF32,UTF32_to_latin);
 
@@ -98,9 +98,11 @@ printf("\nTesting conversion back to back: Big Endianness\n");
 
     }*/
 
-/*
-const char* test_string = "test string";
-test_conversion1<BIG, char32_t, latin_to_UTF32, UTF32_to_latin>(test_string, strlen(test_string));*/
 
-  return 0;
+//This doesn't work, complains about type being wrong
+/* 
+const char* test_string = "test string";
+test_conversion_with_templates<BIG, char32_t>(test_string, strlen(test_string), latin_to_UTF32<BIG>, UTF32_to_latin<BIG>);
+ 
+ */  return 0;
 }
