@@ -50,3 +50,5 @@ inline size_t latin_to_utf16(const char* buf, size_t len, char16_t* utf16_output
 
     return utf16_output - start;
 }
+
+

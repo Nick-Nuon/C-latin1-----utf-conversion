@@ -124,7 +124,7 @@ test_conversion_with_templates<BIG, char32_t>(test_string, strlen(test_string), 
     }
 
     printf("\nTesting conversion UTF8 => Latin1: Pure ASCII \n");
-        test_utf8_to_latin(u8"Hello World"); // pure ASCII should convert
+        test_utf8_to_latin(u8"Hello Worlddf!!!!"); // pure ASCII should convert
 
     printf("\nTesting conversion UTF8 => Latin1: 2 byte Code point within acceptable range (129-255) \n");
         test_utf8_to_latin(u8"Hello World \xC3\x98"); // two bytes that denotes a code point within 129-255 range should convert, corresponds to character 0x00D8

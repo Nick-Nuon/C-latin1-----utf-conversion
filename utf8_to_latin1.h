@@ -77,7 +77,7 @@ inline size_t UTF8_to_latin(const char* buf, size_t len, char* latin_output) {
 }
 
 
-size_t latin_to_UTF8(const char *latin_str,  size_t len, char *utf8_output) {
+/* size_t latin_to_UTF8(const char *latin_str,  size_t len, char *utf8_output) {
     size_t output_index = 0;
     for (size_t i = 0; i < len; i++) {
         unsigned char uchar_value = static_cast<unsigned char>(latin_str[i]);
@@ -90,6 +90,60 @@ size_t latin_to_UTF8(const char *latin_str,  size_t len, char *utf8_output) {
             utf8_output[output_index++] = 0x80 | (uchar_value & 0x3F); // Second byte: 10xxxxxx
         }
     }
-    utf8_output[output_index] = '\0'; // Null-terminate the output string
     return output_index; // Return the length of the output string
+} */
+
+inline size_t latin_to_UTF8(const char* buf, size_t len, char* utf8_output) {
+  const uint32_t *data = reinterpret_cast<const uint32_t *>(buf);
+  size_t pos = 0;
+  char* start{utf8_output};
+  while (pos < len) {
+    // try to convert the next block of 2 ASCII characters
+    if (pos + 2 <= len) { // if it is safe to read 8 more bytes, check that they are ascii
+      uint64_t v;
+      ::memcpy(&v, data + pos, sizeof(uint64_t));
+      if ((v & 0xFFFFFF80FFFFFF80) == 0) {
+        *utf8_output++ = char(buf[pos]);
+				*utf8_output++ = char(buf[pos+1]);
+        pos += 2;
+        continue;
+      }
+    }
+    uint32_t word = data[pos];
+    if((word & 0xFFFFFF80)==0) {
+      // will generate one UTF-8 bytes
+      *utf8_output++ = char(word);
+      pos++;
+    } else if((word & 0xFFFFFF00)==0) {
+      // will generate two UTF-8 bytes
+      // we have 0b110XXXXX 0b10XXXXXX
+      //Example: suppose we have 
+      *utf8_output++ = char((word>>6) | 0b11000000); //
+      *utf8_output++ = char((word & 0b111111) | 0b10000000); //
+      pos++;
+    } else {
+        //nothing happens
+
+    }
+
+    /* if((word & 0xFFFF0000)==0) {
+      // will generate three UTF-8 bytes
+      // we have 0b1110XXXX 0b10XXXXXX 0b10XXXXXX
+			if (word >= 0xD800 && word <= 0xDFFF) { return 0; }
+      *utf8_output++ = char((word>>12) | 0b11100000);
+      *utf8_output++ = char(((word>>6) & 0b111111) | 0b10000000);
+      *utf8_output++ = char((word & 0b111111) | 0b10000000);
+      pos++;
+    } else {
+      // will generate four UTF-8 bytes
+      // we have 0b11110XXX 0b10XXXXXX 0b10XXXXXX 0b10XXXXXX
+			if (word > 0x10FFFF) { return 0; }
+      *utf8_output++ = char((word>>18) | 0b11110000);
+      *utf8_output++ = char(((word>>12) & 0b111111) | 0b10000000);
+      *utf8_output++ = char(((word>>6) & 0b111111) | 0b10000000);
+      *utf8_output++ = char((word & 0b111111) | 0b10000000);
+      pos ++;
+    } */
+  }
+  return utf8_output - start;
 }
