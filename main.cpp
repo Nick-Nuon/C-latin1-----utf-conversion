@@ -132,9 +132,21 @@ test_conversion_with_templates<BIG, char32_t>(test_string, strlen(test_string), 
     printf("\nTesting conversion UTF8 => Latin1: This should fail  \n");
         test_utf8_to_latin(u8"Hello World\xD8");
 
- 
+    printf("\nTesting conversion Latin1 => UTF8:  \n");
+    test_utf8_to_latin("Hello World");
 
 
+ /* 
+printf("\nTesting conversion UTF8 back to back\n");
+    for (int i = 0; i < 10; i++) {
+        test_conversion_UTF8(examples[i]);
+
+    }
+ */
+
+printf("\nTesting conversion UTF8 back to back\n");
+
+test_conversion_UTF8("Hello world");
 
    return 0;
 }

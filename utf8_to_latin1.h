@@ -94,7 +94,7 @@ inline size_t UTF8_to_latin(const char* buf, size_t len, char* latin_output) {
 } */
 
 inline size_t latin_to_UTF8(const char* buf, size_t len, char* utf8_output) {
-  const uint32_t *data = reinterpret_cast<const uint32_t *>(buf);
+  const char *data = reinterpret_cast<const char *>(buf);
   size_t pos = 0;
   char* start{utf8_output};
   while (pos < len) {
@@ -110,7 +110,7 @@ inline size_t latin_to_UTF8(const char* buf, size_t len, char* utf8_output) {
       }
     }
     uint32_t word = data[pos];
-    if((word & 0xFFFFFF80)==0) {
+    if((word & 0xFFFFFF80)==0) { //if ASCII
       // will generate one UTF-8 bytes
       *utf8_output++ = char(word);
       pos++;
@@ -123,6 +123,11 @@ inline size_t latin_to_UTF8(const char* buf, size_t len, char* utf8_output) {
       pos++;
     } else {
         //nothing happens
+
+        printf("Not a Latin character. \n");
+        printf("offending word:%x\n",word);
+        pos++;
+        return 0;
 
     }
 

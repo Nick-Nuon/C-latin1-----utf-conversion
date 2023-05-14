@@ -1,5 +1,10 @@
 #include <iconv.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <cstring>
 #include "helpers.h"
 #include "latin1_to_utf32.h"
 #include "utf16_to_latin1.h"
@@ -291,27 +296,6 @@ void test_latin_to_utf16() {
 }
 
 
-
-
-
-//This doesn't seem to work work as intended
-template<endianness endian, typename T>
-void test_conversion_with_templates(const char* input, size_t input_len,
-                                    size_t (*encode)(const char*, size_t, T*), 
-                                    size_t (*decode)(const T*, size_t, char*)) {                                        
-    T buffer[input_len * 4];  // Assuming worst case UTF-32
-
-    // Encode
-    size_t encoded_size = encode(input, input_len, buffer);
-
-    // Prepare buffer for decoded data
-    char decoded_buffer[input_len];
-
-    // Decode
-    size_t decoded_size = decode(buffer, encoded_size, decoded_buffer);
-}
-
-
 template<endianness input_endianess>
 void test_conversion_utf16(const char *example) {
     // Step 1: Convert the original Latin-1 string to UTF-16
@@ -336,6 +320,7 @@ void test_conversion_utf16(const char *example) {
     printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
 }
 
+//Note: Since 
 void test_utf8_to_latin(const char *test_str) {
     // Determine the length of the string
     size_t len = strlen(test_str);
@@ -359,5 +344,61 @@ void test_utf8_to_latin(const char *test_str) {
 
     // Free the dynamically allocated memory
     delete[] utf8_str;
+}
+
+
+void test_latin_to_UTF8(const char* test_str) {
+    // Determine the length of the string
+    size_t len = std::strlen(test_str);
+
+    // The vector to store the output UTF-8 string
+    // We reserve 4 times the length of the input string to be safe,
+    // as a single Latin-1 character can take up to 4 bytes in UTF-8.
+    // Plus 1 for the null terminator.
+    std::vector<char> utf8_str(4 * len + 1);
+
+    // Call the function to convert the string
+    // Note: You'll need to implement or include latin_to_UTF8 function
+    size_t converted_len = latin_to_UTF8(test_str, len, utf8_str.data());
+
+    // Null-terminate the output string
+    //utf8_str[converted_len] = '\0';
+
+    // Print out the result
+    if (converted_len == 0) {
+        std::cout << "Conversion failed.\n";
+    } else {
+        std::cout << "Converted string: " << utf8_str.data() << "\n";
+    }
+}
+
+
+void test_conversion_UTF8(const char *example) {
+    // Step 1: Convert the original Latin-1 string to UTF-8
+    const size_t latin_len = strlen(example);
+    char utf8_output[4 * latin_len]; // 4 times the length to accommodate maximum UTF-8 size, plus null terminator
+    memset(utf8_output, 0, sizeof(utf8_output));
+
+    latin_to_UTF8(example, latin_len, utf8_output);
+
+    // Step 2: Convert the UTF-8 string back to Latin-1
+    char latin_output[latin_len]; // Equal to the original length 
+    memset(latin_output, 0, sizeof(latin_output));
+
+    // Null-terminate the output string else C++ complains
+    utf8_output[latin_len + 1] = '\0';
+
+    UTF8_to_latin(utf8_output, latin_len + 1, latin_output);
+
+    // Step 3: Compare the original Latin-1 string and the converted back string
+    bool success = true;
+    for (size_t i = 0; i < latin_len; i++) {
+        if (example[i] != latin_output[i]) {
+            success = false;
+            printf("Mismatch at position %zu: original 0x%02X, converted 0x%02X\n", i, (unsigned char)example[i], (unsigned char)latin_output[i]);
+        }
+    }
+
+    printf("Test %s: Original: %s, Converted back: %s\n", success ? "PASSED" : "FAILED", example, latin_output);
 }
 
