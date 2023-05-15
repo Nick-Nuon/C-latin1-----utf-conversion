@@ -77,21 +77,6 @@ inline size_t UTF8_to_latin(const char* buf, size_t len, char* latin_output) {
 }
 
 
-/* size_t latin_to_UTF8(const char *latin_str,  size_t len, char *utf8_output) {
-    size_t output_index = 0;
-    for (size_t i = 0; i < len; i++) {
-        unsigned char uchar_value = static_cast<unsigned char>(latin_str[i]);
-        if (uchar_value <= 0x7F) {
-            // Characters in the range 0x00-0x7F are identical in Latin-1 and UTF-8.
-            utf8_output[output_index++] = uchar_value;
-        } else {
-            // Characters in the range 0x80-0xFF need to be converted to two-byte UTF-8 sequences.
-            utf8_output[output_index++] = 0xC0 | (uchar_value >> 6);  // First byte: 110xxxxx
-            utf8_output[output_index++] = 0x80 | (uchar_value & 0x3F); // Second byte: 10xxxxxx
-        }
-    }
-    return output_index; // Return the length of the output string
-} */
 
 inline size_t latin_to_UTF8(const char* buf, size_t len, char* utf8_output) {
   const char *data = reinterpret_cast<const char *>(buf);
@@ -131,24 +116,6 @@ inline size_t latin_to_UTF8(const char* buf, size_t len, char* utf8_output) {
 
     }
 
-    /* if((word & 0xFFFF0000)==0) {
-      // will generate three UTF-8 bytes
-      // we have 0b1110XXXX 0b10XXXXXX 0b10XXXXXX
-			if (word >= 0xD800 && word <= 0xDFFF) { return 0; }
-      *utf8_output++ = char((word>>12) | 0b11100000);
-      *utf8_output++ = char(((word>>6) & 0b111111) | 0b10000000);
-      *utf8_output++ = char((word & 0b111111) | 0b10000000);
-      pos++;
-    } else {
-      // will generate four UTF-8 bytes
-      // we have 0b11110XXX 0b10XXXXXX 0b10XXXXXX 0b10XXXXXX
-			if (word > 0x10FFFF) { return 0; }
-      *utf8_output++ = char((word>>18) | 0b11110000);
-      *utf8_output++ = char(((word>>12) & 0b111111) | 0b10000000);
-      *utf8_output++ = char(((word>>6) & 0b111111) | 0b10000000);
-      *utf8_output++ = char((word & 0b111111) | 0b10000000);
-      pos ++;
-    } */
   }
   return utf8_output - start;
 }
